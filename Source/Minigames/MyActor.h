@@ -41,4 +41,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BallPhysics)
 	float speed;
+
+	float lastHit;
 };

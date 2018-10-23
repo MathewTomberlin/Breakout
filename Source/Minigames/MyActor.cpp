@@ -2,7 +2,9 @@
 
 #include "MyActor.h"
 #include "Paddle.h"
+#include "Kismet/GameplayStatics.h"
 #include "Brick.h"
+#include "Pickup.h"
 #include "MinigameInstance.h"
 #include "PaddleController.h"
 #include "Classes/Components/StaticMeshComponent.h"
@@ -13,7 +15,7 @@
 // Sets default values
 AMyActor::AMyActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
@@ -42,7 +44,7 @@ void AMyActor::BeginPlay()
 void AMyActor::BeginMovement() {
 	switch (((UMinigameInstance*)GetWorld()->GetGameInstance())->DifficultySetting) {
 	case 1:
-		speed = 500.0f+ (((UMinigameInstance*)GetWorld()->GetGameInstance())->CurrentLevel*10);
+		speed = 500.0f + (((UMinigameInstance*)GetWorld()->GetGameInstance())->CurrentLevel * 10);
 		break;
 	case 2:
 		speed = 800.0f + (((UMinigameInstance*)GetWorld()->GetGameInstance())->CurrentLevel * 10);
@@ -62,8 +64,14 @@ void AMyActor::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	MeshComponent->SetLockedAxis(EDOFMode::YZPlane);
 
-	if(((APaddleController*)GetWorld()->GetFirstPlayerController())->BallInMotion)
-		MeshComponent->SetPhysicsLinearVelocity(velocity.GetSafeNormal()*speed);
+	if (((APaddleController*)GetWorld()->GetFirstPlayerController())->BallInMotion){
+		if (!((APaddleController*)GetWorld()->GetFirstPlayerController())->Paused) {
+			MeshComponent->SetPhysicsLinearVelocity(velocity.GetSafeNormal()*speed);
+		}
+		else {
+			MeshComponent->SetPhysicsLinearVelocity(velocity.GetSafeNormal() * 0);
+		}
+	}
 
 	//Ball died, reset it
 	if (MeshComponent->GetComponentLocation().Z < ((APaddleController*)GetWorld()->GetFirstPlayerController())->killZ) {
@@ -89,7 +97,10 @@ void AMyActor::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 		float upDir = FMath::Abs(FVector::DotProduct(NormalImpulse, FVector(0, 0, 1)));
 		float rightDir = FMath::Abs(FVector::DotProduct(NormalImpulse, FVector(0, 1, 0)));
 
-		if (OtherActor->IsA(APaddle::StaticClass())) {
+		//Paddle controller plays a sound based on the object hit
+		if (OtherActor->IsA(APickup::StaticClass())) {
+			((APaddleController*)GetWorld()->GetFirstPlayerController())->HitPickup();
+		} else if (OtherActor->IsA(APaddle::StaticClass())) {
 			bounceDir = FVector(0, (HitComp->GetComponentLocation().Y-OtherComp->GetComponentLocation().Y)*0.01f, (HitComp->GetComponentLocation().Z - OtherComp->GetComponentLocation().Z > 0)?-FMath::Sign(HitComp->GetComponentLocation().Z - OtherComp->GetComponentLocation().Z):0);
 			velocity = bounceDir.GetSafeNormal()*speed;
 			((APaddleController*)GetWorld()->GetFirstPlayerController())->HitPaddle();
@@ -97,7 +108,8 @@ void AMyActor::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 			((APaddleController*)GetWorld()->GetFirstPlayerController())->HitWall();
 		}
 
-		if (bounceDir.Z!=0) {
+		float realtimeSeconds = UGameplayStatics::GetRealTimeSeconds(GetWorld());
+		if (bounceDir.Z!=0 && realtimeSeconds-lastHit>0.5f) {
 			//Invert velocity in the proper axis
 			if (rightDir < upDir) {
 				velocity = FVector(velocity.X, velocity.Y, velocity.Z*-1);

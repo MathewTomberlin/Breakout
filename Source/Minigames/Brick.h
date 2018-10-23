@@ -49,5 +49,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BrickHealth)
 	bool bonusBlock;
+
+	float lastHit;
 	
 };

@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PaddlePhysics)
 	bool BallInMotion;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = PaddlePhysics)
+	bool Paused;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PaddlePhysics)
 	bool MainMenu;
 
@@ -80,4 +83,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void HitWall();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void HitPickup();
 };
