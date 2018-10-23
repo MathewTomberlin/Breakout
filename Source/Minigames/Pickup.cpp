@@ -48,7 +48,7 @@ void APickup::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 {
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL)) {
 		if (OtherActor->IsA(APaddle::StaticClass())) {
-			((APaddleController*)GetWorld()->GetFirstPlayerController())->Multiplier++;
+			((APaddleController*)GetWorld()->GetFirstPlayerController())->Multiplier+=Bonus;
 			Destroy();
 		}
 	}

@@ -68,6 +68,7 @@ void ABrick::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 					UWorld *world = GetWorld();
 
 					APickup* Pickup = world->SpawnActor<APickup>(PickupBlueprint, location, rotation, sp);
+					Pickup->Bonus = maxhealth-1;
 				}
 
 				int difficulty = ((UMinigameInstance*)GetGameInstance())->DifficultySetting;
