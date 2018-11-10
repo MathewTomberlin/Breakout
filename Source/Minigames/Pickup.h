@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BrickHealth)
 	int Bonus;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdatePickupColor();
 };

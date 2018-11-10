@@ -51,7 +51,7 @@ void ABrick::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 {
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL)) {
 		float realtimeSeconds = UGameplayStatics::GetRealTimeSeconds(GetWorld());
-		if (OtherActor->IsA(AMyActor::StaticClass()) && realtimeSeconds-lastHit>0.5f) {
+		if (OtherActor->IsA(AMyActor::StaticClass()) && realtimeSeconds-lastHit>0.1f) {
 			health -= 1;
 			DamagedBrick();
 			lastHit = realtimeSeconds;
@@ -69,6 +69,7 @@ void ABrick::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimit
 
 					APickup* Pickup = world->SpawnActor<APickup>(PickupBlueprint, location, rotation, sp);
 					Pickup->Bonus = maxhealth-1;
+					Pickup->UpdatePickupColor();
 				}
 
 				int difficulty = ((UMinigameInstance*)GetGameInstance())->DifficultySetting;

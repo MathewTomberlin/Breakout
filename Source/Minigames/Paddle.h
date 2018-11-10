@@ -40,5 +40,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PaddlePhysics)
 	FVector CameraRelativeLocation;
-	
 };

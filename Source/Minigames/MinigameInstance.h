@@ -32,4 +32,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	bool MainMenu;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FString> GetAllMapNames();
 };
