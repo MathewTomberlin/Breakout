@@ -30,7 +30,6 @@ APaddle::APaddle()
 	CameraComponent->SetRelativeLocation(CameraRelativeLocation);
 	CameraComponent->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 
-	SceneComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetupAttachment(SceneComponent);
 	
 	speed = 100.0f;
